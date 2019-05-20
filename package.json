@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node_modules/.bin/nodemon src/app.js --exec babel-node --",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "compileAll": "babel src --out-dir .compiled --source-maps",
     "compile": "babel src --out-dir .compiled --source-maps --watch"
   },
   "author": "António Lopes",

@@ -12,7 +12,7 @@ const isServerConnected = (client) => {
 }
 
 // Open the connection to the server
-const connectServer = async (collectionName) => {
+const connectToServer = async (collectionName) => {
   let client
   try {
     // Connect to the db
@@ -43,7 +43,7 @@ const connectServer = async (collectionName) => {
 export const GetAll = async () => {
   let client, collection
   try {
-    ({ client, collection } = await connectServer('todo')
+    ({ client, collection } = await connectToServer('todo')
       .catch(err => {
         throw err
       })
@@ -85,7 +85,7 @@ export const GetById = async (id) => {
 
   let client, collection
   try {
-    ({ client, collection } = await connectServer('todo')
+    ({ client, collection } = await connectToServer('todo')
       .catch(err => {
         throw err
       })
@@ -123,7 +123,7 @@ export const CreateTodo = async ({ title, description }) => {
 
   let client, collection
   try {
-    ({ client, collection } = await connectServer('todo')
+    ({ client, collection } = await connectToServer('todo')
       .catch(err => {
         throw err
       })
@@ -165,7 +165,7 @@ export const UpdateTodo = async ({ id, title, description }) => {
 
   let client, collection
   try {
-    ({ client, collection } = await connectServer('todo')
+    ({ client, collection } = await connectToServer('todo')
       .catch(err => {
         throw err
       })
@@ -204,7 +204,7 @@ export const DeleteTodo = async (id) => {
 
   let client, collection
   try {
-    ({ client, collection } = await connectServer('todo')
+    ({ client, collection } = await connectToServer('todo')
       .catch(err => {
         throw err
       })

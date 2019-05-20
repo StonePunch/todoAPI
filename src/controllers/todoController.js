@@ -3,7 +3,7 @@ import ModelFactory from '../models/modelFactory'
 import { modelParser, ActionEnum } from '../entities/modelParser'
 
 class TodosController {
-  async getAllTodos (req, res) {
+  async getAllTodos (_req, res) {
     GetAll()
       .then(val => {
         if (val.success) {

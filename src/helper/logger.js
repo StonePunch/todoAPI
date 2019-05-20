@@ -48,7 +48,6 @@ class Logger {
     let builtMessage =
       `${builtDateTime} ${message}`
 
-    // TODO: Expand logging system
     if (err) {
       // Color the error message in red
       builtMessage +=

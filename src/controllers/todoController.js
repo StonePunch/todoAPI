@@ -1,10 +1,10 @@
-import { GetAll, GetById, CreateTodo, UpdateTodo, DeleteTodo } from '../data/todoRepo'
+import todoRepo from '../data/todoRepo'
 import ModelFactory from '../models/modelFactory'
-import { modelParser, ActionEnum } from '../entities/modelParser'
+import modelParser from '../entities/modelParser'
 
 class TodosController {
   async getAllTodos (_req, res) {
-    GetAll()
+    todoRepo.GetAll()
       .then(val => {
         if (val.success) {
           return res.status(200).send({
@@ -21,7 +21,7 @@ class TodosController {
   }
 
   async getTodo (req, res) {
-    GetById(req.params.id)
+    todoRepo.GetById(req.params.id)
       .then(val => {
         if (val.success) {
           return res.status(200).send({
@@ -52,8 +52,7 @@ class TodosController {
       })
     }
 
-    const returnData = await modelParser.ParseTodoModel(
-      ActionEnum.POST,
+    const returnData = await modelParser.ParseForCreate(
       {
         'id': req.params.id,
         'title': req.body.title,
@@ -70,7 +69,7 @@ class TodosController {
       })
     }
 
-    CreateTodo(returnData.data)
+    todoRepo.CreateTodo(returnData.data)
       .then(val => {
         if (val.success) {
           return res.status(201).send({
@@ -87,8 +86,7 @@ class TodosController {
   }
 
   async updateTodo (req, res) {
-    const returnData = await modelParser.ParseTodoModel(
-      ActionEnum.PATCH,
+    const returnData = await modelParser.ParseForUpdate(
       {
         id: req.params.id,
         title: req.body.title,
@@ -105,7 +103,7 @@ class TodosController {
       })
     }
 
-    UpdateTodo(returnData.data)
+    todoRepo.UpdateTodo(returnData.data)
       .then(val => {
         if (val.success) {
           return res.status(204).send({
@@ -121,8 +119,7 @@ class TodosController {
   }
 
   async replaceTodo (req, res) {
-    const returnData = await modelParser.ParseTodoModel(
-      ActionEnum.PUT,
+    const returnData = await modelParser.ParseForReplace(
       {
         'id': req.params.id,
         'title': req.body.title,
@@ -139,7 +136,7 @@ class TodosController {
       })
     }
 
-    UpdateTodo(returnData.data)
+    todoRepo.UpdateTodo(returnData.data)
       .then(val => {
         if (val.success) {
           return res.status(204).send({
@@ -155,7 +152,7 @@ class TodosController {
   }
 
   async deleteTodo (req, res) {
-    DeleteTodo(req.params.id)
+    todoRepo.DeleteTodo(req.params.id)
       .then(val => {
         if (val.success) {
           return res.status(204).send({

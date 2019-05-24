@@ -81,7 +81,7 @@ class TodoRepo {
 
   async GetById (id) {
     if (!id) return new ReturnData(false)
-    if (id.length !== 12) return new ReturnData(false)
+    if ([12, 24].indexOf(id.length) === -1) return new ReturnData(false)
 
     let client, collection
     try {

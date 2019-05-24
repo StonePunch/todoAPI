@@ -1,5 +1,5 @@
 import { MongoClient, ObjectID } from 'mongodb'
-import Logger from '../helper/logger'
+import logger from '../helper/logger'
 import Todo from '../entities/todo'
 import ReturnData from '../dataTypes/returnData'
 
@@ -30,7 +30,7 @@ const connectToServer = async (collectionName) => {
     // Make sure the connection to the db is closed
     if (isServerConnected(client)) client.close()
 
-    Logger.consoleLog(
+    logger.consoleLog(
       `Error occured while creating a connection to the server`,
       err
     )
@@ -68,13 +68,13 @@ class TodoRepo {
         new Todo(todo._id.toHexString(), todo.title, todo.description)
       )
 
-      Logger.consoleLog(`Found ${todos.length} Todos`)
+      logger.consoleLog(`Found ${todos.length} Todos`)
       return new ReturnData(true, todos)
     } catch (err) {
       // Make sure the connection to the db is closed
       if (isServerConnected(client)) client.close()
 
-      Logger.consoleLog('Error occured while executing GetAll', err)
+      logger.consoleLog('Error occured while executing GetAll', err)
       return new ReturnData(false, null, err)
     }
   }
@@ -107,13 +107,13 @@ class TodoRepo {
 
       if (!todo) return new ReturnData(false)
 
-      Logger.consoleLog('Found requested Todo')
+      logger.consoleLog('Found requested Todo')
       return new ReturnData(true, todo)
     } catch (err) {
       // Make sure the connection to the db is closed
       if (isServerConnected(client)) client.close()
 
-      Logger.consoleLog('Error occured while executing GetById', err)
+      logger.consoleLog('Error occured while executing GetById', err)
       return new ReturnData(false, null, err)
     }
   }
@@ -144,14 +144,14 @@ class TodoRepo {
 
       if (!todo) return new ReturnData(false)
 
-      Logger.consoleLog('New Todo has been inserted')
+      logger.consoleLog('New Todo has been inserted')
 
       return new ReturnData(true, todo)
     } catch (err) {
       // Make sure the connection to the db is closed
       if (isServerConnected(client)) client.close()
 
-      Logger.consoleLog('Error occured while executing CreateTodo', err)
+      logger.consoleLog('Error occured while executing CreateTodo', err)
       return new ReturnData(false, null, err)
     }
   }
@@ -188,14 +188,14 @@ class TodoRepo {
 
       if (!updatedCount) return new ReturnData(false)
 
-      Logger.consoleLog('Updated Todo')
+      logger.consoleLog('Updated Todo')
 
       return new ReturnData(true)
     } catch (err) {
       // Make sure the connection to the db is closed
       if (isServerConnected(client)) client.close()
 
-      Logger.consoleLog('Error occured while executing UpdateTodo', err)
+      logger.consoleLog('Error occured while executing UpdateTodo', err)
       return new ReturnData(false, null, err)
     }
   }
@@ -228,14 +228,14 @@ class TodoRepo {
 
       if (!updatedCount) return new ReturnData(false)
 
-      Logger.consoleLog('Deleted Todo')
+      logger.consoleLog('Deleted Todo')
 
       return new ReturnData(true)
     } catch (err) {
       // Make sure the connection to the db is closed
       if (isServerConnected(client)) client.close()
 
-      Logger.consoleLog('Error occured while executing DeleteTodo', err)
+      logger.consoleLog('Error occured while executing DeleteTodo', err)
       return new ReturnData(false, null, err)
     }
   }

@@ -1,5 +1,5 @@
 import todoRepo from '../data/todoRepo'
-import Logger from '../helper/logger'
+import logger from '../helper/logger'
 import Todo from '../entities/todo'
 import ReturnData from '../dataTypes/returnData'
 
@@ -34,7 +34,7 @@ class ModelParser {
 
       return new ReturnData(true, new Todo(id, title, description))
     } catch (err) {
-      Logger.consoleLog('Error occured while parsing a model for a replace operation', err)
+      logger.consoleLog('Error occured while parsing a model for a replace operation', err)
       return new ReturnData(false, null, err)
     }
   }
@@ -64,7 +64,7 @@ class ModelParser {
 
       return new ReturnData(true, new Todo(id, title, description))
     } catch (err) {
-      Logger.consoleLog('Error occured while parsing a model for a update operation', err)
+      logger.consoleLog('Error occured while parsing a model for a update operation', err)
       return new ReturnData(false, null, err)
     }
   }

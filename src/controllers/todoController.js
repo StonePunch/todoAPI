@@ -1,5 +1,5 @@
 import todoRepo from '../data/todoRepo'
-import ModelFactory from '../models/modelFactory'
+import modelFactory from '../models/modelFactory'
 import modelParser from '../entities/modelParser'
 
 class TodosController {
@@ -10,7 +10,7 @@ class TodosController {
           return res.status(200).send({
             success: true,
             message: 'Todos were retrieved successfully',
-            data: val.data.map(todo => ModelFactory.CreateTodoModel(todo))
+            data: val.data.map(todo => modelFactory.CreateTodoModel(todo))
           })
         }
         return res.status(404).send({
@@ -27,7 +27,7 @@ class TodosController {
           return res.status(200).send({
             success: true,
             message: 'Todo was retrieved successfully',
-            data: ModelFactory.CreateTodoModel(val.data)
+            data: modelFactory.CreateTodoModel(val.data)
           })
         }
         return res.status(404).send({
@@ -75,7 +75,7 @@ class TodosController {
           return res.status(201).send({
             success: true,
             message: 'Todo created successfully',
-            data: ModelFactory.CreateTodoModel(val.data)
+            data: modelFactory.CreateTodoModel(val.data)
           })
         }
         return res.status(400).send({

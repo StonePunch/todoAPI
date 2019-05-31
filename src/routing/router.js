@@ -1,9 +1,24 @@
 import express from 'express'
 import todoController from '../controllers/todoController'
+import versionController from './versioning'
 
 const router = express.Router()
 
-const BASEROUTE = '/api/v1/todos'
+const BASEROUTE = '/api/todos'
+
+let version
+router.use((req, _res, next) => {
+  const acceptHeader = versionController.getVersion(req)
+
+  version = acceptHeader.match(/version=([0-9]+\.[0-9])*/)
+  if (version == null) {
+    next()
+  }
+
+  version = version[1]
+
+  next()
+})
 
 /*
   GET

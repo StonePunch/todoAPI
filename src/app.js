@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Log Request
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   if (req) {
     logger.consoleLog(`Request to server for: ${req.url}`)
   }

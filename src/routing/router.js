@@ -1,23 +1,30 @@
 import express from 'express'
-import todoController from '../controllers/todoController'
-import versionController from './versioning'
+// import logger from '../helper/logger'
+import todoController from '../controllers/todoController/todoControllerV1.0'
+import controllerSelector from './controllerSelector'
 
 const router = express.Router()
 
-const BASEROUTE = '/api/todos'
+const BASEROUTE = '/api/todo'
 
-let version
-router.use((req, _res, next) => {
-  const acceptHeader = versionController.getVersion(req)
+let controller
+router.use(async (req, res, next) => {
+  controller = await controllerSelector.GetController(req)
+    .catch(err => {
+      throw err
+    })
+    .then(val => {
+      return val
+    })
 
-  version = acceptHeader.match(/version=([0-9]+\.[0-9])*/)
-  if (version == null) {
-    next()
+  console.log(controller)
+  if (controller) next()
+  else {
+    return res.status(404).send({
+      success: false,
+      message: 'Requested endpoint not found, make sure the version is correct'
+    })
   }
-
-  version = version[1]
-
-  next()
 })
 
 /*
@@ -51,7 +58,7 @@ router.delete(`${BASEROUTE}/:id`, todoController.deleteTodo)
 router.put(`${BASEROUTE}/:id`, todoController.replaceTodo)
 
 /*
-  Patch
+  PATCH
   Updates a todo with new information
 */
 router.patch(`${BASEROUTE}/:id`, todoController.updateTodo)

@@ -1,6 +1,6 @@
-import todoRepo from '../data/todoRepo'
-import modelFactory from '../models/modelFactory'
-import modelParser from '../entities/modelParser'
+import todoRepo from '../../data/todoRepo'
+import modelFactory from '../../models/modelFactory'
+import modelParser from '../../entities/modelParser'
 
 class TodosController {
   async getAllTodos (_req, res) {

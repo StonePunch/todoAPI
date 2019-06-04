@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // Log Request
 app.use((req, _res, next) => {
   if (req) {
-    logger.consoleLog(`Request to server for: ${req.url}`)
+    logger.consoleLog(`Request to server for: ${req.path}`)
   }
   next()
 })

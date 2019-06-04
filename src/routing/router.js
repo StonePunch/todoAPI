@@ -1,5 +1,5 @@
 import express from 'express'
-// import logger from '../helper/logger'
+import logger from '../helper/logger'
 import todoController from '../controllers/todoController/todoControllerV1.0'
 import controllerSelector from './controllerSelector'
 
@@ -7,25 +7,46 @@ const router = express.Router()
 
 const BASEROUTE = '/api/todo'
 
+// let todoController
 let controller
 router.use(async (req, res, next) => {
   controller = await controllerSelector.GetController(req)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    .catch(err => { throw err })
+    .then(val => { return val.data })
 
-  console.log(controller)
-  if (controller) next()
-  else {
+  if (controller) {
+    const controllerSegments = controller.split('\\')
+    const controllerName = controllerSegments[0]
+    const controllerVersion = controllerSegments[1].split('V')[1]
+
+    logger.consoleLog(`Selected ${controllerName}, version ${controllerVersion} to handle the request`)
+
+    // todoController = require(`../controllers/${controller}`)
+
+    next()
+  } else {
     return res.status(404).send({
       success: false,
       message: 'Requested endpoint not found, make sure the version is correct'
     })
   }
 })
+
+// Dynamic import
+// Reference: https://developers.google.com/web/updates/2017/11/dynamic-import
+
+// todoController = import(`../controllers/${controller}`)
+//   .then(val => { return val })
+
+// const util = require('util')
+
+// import('../controllers/' + controller)
+//   .catch(err => {
+//     throw err
+//   })
+//   .then(val => {
+//     todoController = val
+//   })
 
 /*
   GET

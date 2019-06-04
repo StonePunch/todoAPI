@@ -1,8 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
+import logger from '../helper/logger'
+import ReturnData from '../dataTypes/returnData'
 
-const GetController = async url => {
+const GetControllerFromUrl = async url => {
   const controller = url.match(/\/api\/([a-zA-Z]+)/)
 
   if (!controller) return null
@@ -10,164 +12,160 @@ const GetController = async url => {
   return controller[1]
 }
 
-const IsVersionAvailable = async (controller, version) => {
-  const controllerDirectory = path.join(
-    __dirname,
-    `/../controllers/${controller}Controller/`
-  )
+const IsVersionAvailable = async (model, version) => {
+  try {
+    const controllerDirectory = path.join(
+      __dirname,
+      `/../controllers/${model}Controller/`
+    )
 
-  // Required to avoid using the callback function
-  // Reference: https://nodejs.org/dist/latest-v8.x/docs/api/util.html#util_util_promisify_original
-  const readdir = promisify(fs.readdir)
-  const files = await readdir(controllerDirectory)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    // Required to avoid using the callback function
+    // Reference: https://nodejs.org/dist/latest-v8.x/docs/api/util.html#util_util_promisify_original
+    const readdir = promisify(fs.readdir)
+    const files = await readdir(controllerDirectory)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  for (let i = 0; i < files.length; i++) {
-    let controllerVersion = files[i].match(/V([0-9]+\.[0-9]+)\.js/)
+    for (let i = 0; i < files.length; i++) {
+      let controllerVersion = files[i].match(/V([0-9]+\.[0-9]+)\.js/)
 
-    // Skip iteration
-    if (!controllerVersion) continue
+      // Skip iteration
+      if (!controllerVersion) continue
 
-    controllerVersion = controllerVersion[1]
-    if (controllerVersion === version) return true
+      controllerVersion = controllerVersion[1]
+      if (controllerVersion === version) {
+        return new ReturnData(true)
+      }
+    }
+    // The controller/version combination does not exist
+    return new ReturnData(false)
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while executing IsVersionAvailable ' +
+      `with the inputs ${model} and ${version}`
+      , err
+    )
+    return new ReturnData(false, null, err)
   }
-  return false
 }
 
 const GetVersionFromAcceptHeaderVersion = async req => {
-  const acceptHeader = req.header('Accept')
+  try {
+    const acceptHeader = req.header('Accept')
 
-  if (!acceptHeader) return null
+    if (!acceptHeader) return new ReturnData(false)
 
-  let version = acceptHeader.match(/version=([0-9]+\.[0-9]+)/)
+    let version = acceptHeader.match(/version=([0-9]+\.[0-9]+)/)
 
-  if (!version) return null
+    if (!version) return new ReturnData(false)
 
-  version = version[1]
-  const model = await GetController(req.url)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    version = version[1]
+    const model = await GetControllerFromUrl(req.url)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  const isAvailable = await IsVersionAvailable(model, version)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    const returnData = await IsVersionAvailable(model, version)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  if (!isAvailable) return null
+    if (!returnData.success) return new ReturnData(false)
 
-  const controller = `${model}ControllerV${version}`
-  return controller
+    const controller = `${model}ControllerV${version}`
+    return new ReturnData(true, path.join(`${model}Controller`, controller))
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while executing GetVersionFromAcceptHeaderVersion'
+      , err
+    )
+    return new ReturnData(false, null, err)
+  }
 }
 
 const GetVersionFromCustomHeader = async req => {
-  const customHeader = req.header('X-Todo-Version')
+  try {
+    const customHeader = req.header('X-Todo-Version')
 
-  if (!customHeader) return null
+    if (!customHeader) return new ReturnData(false)
 
-  let version = customHeader.match(/([0-9]+\.[0-9]+)/)
+    let version = customHeader.match(/([0-9]+\.[0-9]+)/)
 
-  if (!version) return null
+    if (!version) return new ReturnData(false)
 
-  version = version[1]
-  const model = await GetController(req.url)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    version = version[1]
+    const model = await GetControllerFromUrl(req.url)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  const isAvailable = await IsVersionAvailable(model, version)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    const returnData = await IsVersionAvailable(model, version)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  if (!isAvailable) return null
+    if (!returnData.success) return new ReturnData(false)
 
-  const controller = `${model}ControllerV${version}`
-  return controller
+    const controller = `${model}ControllerV${version}`
+    return new ReturnData(true, path.join(`${model}Controller`, controller))
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while executing GetVersionFromCustomHeader'
+      , err
+    )
+    return new ReturnData(false, null, err)
+  }
 }
 
 const GetVersionFromQueryString = async req => {
-  const queryValue = req.query.version
+  try {
+    const queryValue = req.query.version
 
-  if (!queryValue) return null
+    if (!queryValue) return new ReturnData(false)
 
-  let version = queryValue.match(/([0-9]+\.[0-9]+)/)
+    let version = queryValue.match(/([0-9]+\.[0-9]+)/)
 
-  if (!version) return null
+    if (!version) return new ReturnData(false)
 
-  version = version[1]
-  const model = await GetController(req.url)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    version = version[1]
+    const model = await GetControllerFromUrl(req.url)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  const isAvailable = await IsVersionAvailable(model, version)
-    .catch(err => {
-      throw err
-    })
-    .then(val => {
-      return val
-    })
+    const returnData = await IsVersionAvailable(model, version)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-  if (!isAvailable) return null
+    if (!returnData.success) return new ReturnData(false)
 
-  const controller = `${model}ControllerV${version}`
-  return controller
+    const controller = `${model}ControllerV${version}`
+    return new ReturnData(true, path.join(`${model}Controller`, controller))
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while executing GetVersionFromQueryString'
+      , err
+    )
+    return new ReturnData(false, null, err)
+  }
 }
 
 class ControllerSelector {
   async GetController (req, _res) {
-    let controller
+    let returnData
 
-    controller = await GetVersionFromAcceptHeaderVersion(req)
-      .catch(err => {
-        throw err
-      })
-      .then(val => {
-        return val
-      })
+    returnData = await GetVersionFromAcceptHeaderVersion(req)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-    if (controller) return controller
+    if (returnData.success) return new ReturnData(true, returnData.data)
 
-    controller = await GetVersionFromCustomHeader(req)
-      .catch(err => {
-        throw err
-      })
-      .then(val => {
-        return val
-      })
+    returnData = await GetVersionFromCustomHeader(req)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-    if (controller) return controller
+    if (returnData.success) return new ReturnData(true, returnData.data)
 
-    controller = await GetVersionFromQueryString(req)
-      .catch(err => {
-        throw err
-      })
-      .then(val => {
-        return val
-      })
+    returnData = await GetVersionFromQueryString(req)
+      .catch(err => { throw err })
+      .then(val => { return val })
 
-    return controller
+    return returnData
   }
 }
 

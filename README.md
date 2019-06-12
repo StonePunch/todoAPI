@@ -12,6 +12,9 @@
 <h2>Running the App</h2>
 <ol>
   <li>
+    <a href="https://nodejs.org/en/download/">Node.js</a> installation, the application was developed and tested using Node.js v12.4.0 and npm v6.9.0
+  </li>
+  <li>
     <a href="https://www.mongodb.com/download-center/community">MongoDB</a> installation, the application was developed and tested using MongoDB Community v4.0.9
   </li>
   <li>

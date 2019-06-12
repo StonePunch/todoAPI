@@ -186,4 +186,4 @@ class TodosController {
 }
 
 const todoController = new TodosController()
-export default todoController
+module.exports = todoController

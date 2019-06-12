@@ -146,7 +146,7 @@ const GetVersionFromQueryString = async req => {
 }
 
 class ControllerSelector {
-  async GetController (req, _res) {
+  async GetSelectedController (req, _res) {
     let returnData
 
     returnData = await GetVersionFromAcceptHeaderVersion(req)

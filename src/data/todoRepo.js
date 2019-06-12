@@ -158,7 +158,7 @@ class TodoRepo {
 
   async UpdateTodo ({ id, title, description }) {
     if (!id) return new ReturnData(false)
-    if (id.length !== 12) return new ReturnData(false)
+    if ([12, 24].indexOf(id.length) === -1) return new ReturnData(false)
 
     // Avoiding nulls in the db
     if (title == null) title = ''
@@ -202,7 +202,7 @@ class TodoRepo {
 
   async DeleteTodo (id) {
     if (!id) return new ReturnData(false)
-    if (id.length !== 12) return new ReturnData(false)
+    if ([12, 24].indexOf(id.length) === -1) return new ReturnData(false)
 
     let client, collection
     try {

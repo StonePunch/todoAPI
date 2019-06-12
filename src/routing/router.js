@@ -1,40 +1,12 @@
 import express from 'express'
-import logger from '../helper/logger'
-import todoController from '../controllers/todoController/todoControllerV1.0'
-import controllerSelector from './controllerSelector'
+// import logger from '../helper/logger'
+import todoController from '../controllers/todoController/baseTodoController'
+// import controllerSelector from './controllerSelector'
 
 const router = express.Router()
 
 const BASEROUTE = '/api/todo'
 
-// let todoController
-router.use(async (req, res, next) => {
-  const controller = await controllerSelector.GetController(req)
-    .catch(err => { throw err })
-    .then(val => { return val.data })
-
-  if (controller) {
-    const controllerSegments = controller.split('\\')
-    const controllerName = controllerSegments[0]
-    const controllerVersion = controllerSegments[1].split('V')[1]
-
-    logger.consoleLog(`Selected ${controllerName}, version ${controllerVersion} to handle the request`)
-
-    // todoController = require(`../controllers/${controller}`)
-
-    next()
-  } else {
-    return res.status(404).send({
-      success: false,
-      message: 'Requested endpoint not found, make sure the version is correct'
-    })
-  }
-})
-
-/*
-  GET
-  List all the todos
-*/
 router.get(BASEROUTE, todoController.getTodo)
 
 /*

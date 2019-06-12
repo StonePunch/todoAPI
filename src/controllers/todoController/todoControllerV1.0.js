@@ -218,9 +218,8 @@ class TodosController {
 
     const returnData = await modelParser.ParseForCreate(
       {
-        'id': req.params.id,
-        'title': req.body.title,
-        'description': req.body.description
+        title: req.body.title,
+        description: req.body.description
       })
       .then(val => {
         return val

@@ -4,7 +4,7 @@ import Todo from '../entities/todo'
 import ReturnData from '../dataTypes/returnData'
 
 class ModelParser {
-  async ParseForCreate (title, description) {
+  async ParseForCreate ({ title, description }) {
     // All fields, besides the id, must be present for the creation of a Todo
     if (!title) return new ReturnData(false)
     if (!description) return new ReturnData(false)
@@ -12,7 +12,7 @@ class ModelParser {
     return new ReturnData(true, new Todo(null, title, description))
   }
 
-  async ParseForReplace (id, title, description) {
+  async ParseForReplace ({ id, title, description }) {
     if (!id) return new ReturnData(false)
 
     try {
@@ -39,7 +39,7 @@ class ModelParser {
     }
   }
 
-  async ParseForUpdate (id, title, description) {
+  async ParseForUpdate ({ id, title, description }) {
     if (!id) return new ReturnData(false)
 
     try {

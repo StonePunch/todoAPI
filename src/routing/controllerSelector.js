@@ -145,6 +145,45 @@ const GetVersionFromQueryString = async req => {
   }
 }
 
+const GetMostRecentVersion = async req => {
+  try {
+    const model = await GetControllerFromUrl(req.url)
+      .catch(err => { throw err })
+      .then(val => { return val })
+
+    const controllerDirectory = path.join(
+      __dirname,
+      `/../controllers/${model}Controller/`
+    )
+
+    // Required to avoid using the callback function
+    // Reference: https://nodejs.org/dist/latest-v8.x/docs/api/util.html#util_util_promisify_original
+    const readdir = promisify(fs.readdir)
+    let files = await readdir(controllerDirectory)
+      .catch(err => { throw err })
+      .then(val => { return val })
+
+    let versions = []
+    for (let i = 0; i < files.length; i++) {
+      let controllerVersion = files[i].match(/V([0-9]+\.[0-9]+)\.js/)
+
+      if (!controllerVersion) continue
+
+      versions.push(controllerVersion[1])
+    }
+
+    const mostRecentVersion = Math.max(...versions.map(val => parseFloat(val)))
+    const controller = `${model}ControllerV${mostRecentVersion}`
+    return new ReturnData(true, path.join(`${model}Controller`, controller))
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while executing GetMostRecentVersion'
+      , err
+    )
+    return new ReturnData(false, null, err)
+  }
+}
+
 class ControllerSelector {
   async GetSelectedController (req, _res) {
     let returnData
@@ -162,6 +201,12 @@ class ControllerSelector {
     if (returnData.success) return returnData
 
     returnData = await GetVersionFromQueryString(req)
+      .catch(err => { throw err })
+      .then(val => { return val })
+
+    if (returnData.success) return returnData
+
+    returnData = await GetMostRecentVersion(req)
       .catch(err => { throw err })
       .then(val => { return val })
 

@@ -1,7 +1,5 @@
 import express from 'express'
-// import logger from '../helper/logger'
 import todoController from '../controllers/todoController/baseTodoController'
-// import controllerSelector from './controllerSelector'
 
 const router = express.Router()
 

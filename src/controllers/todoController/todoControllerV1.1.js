@@ -3,23 +3,6 @@ import modelFactory from '../../models/modelFactory'
 import modelParser from '../../entities/modelParser'
 
 class TodosController {
-  // async getAllTodos (_req, res) {
-  //   todoRepo.GetAll()
-  //     .then(val => {
-  //       if (val.success) {
-  //         return res.status(200).send({
-  //           success: true,
-  //           message: 'Todos were retrieved successfully',
-  //           data: val.data.map(todo => modelFactory.CreateTodoModel(todo))
-  //         })
-  //       }
-  //       return res.status(404).send({
-  //         success: false,
-  //         message: 'No Todos were found'
-  //       })
-  //     })
-  // }
-
   async getTodo (req, res) {
     if (req.params.id) {
       todoRepo.GetById(req.params.id)

@@ -8,9 +8,8 @@ const router = express.Router()
 const BASEROUTE = '/api/todo'
 
 // let todoController
-let controller
 router.use(async (req, res, next) => {
-  controller = await controllerSelector.GetController(req)
+  const controller = await controllerSelector.GetController(req)
     .catch(err => { throw err })
     .then(val => { return val.data })
 
@@ -32,33 +31,17 @@ router.use(async (req, res, next) => {
   }
 })
 
-// Dynamic import
-// Reference: https://developers.google.com/web/updates/2017/11/dynamic-import
-
-// todoController = import(`../controllers/${controller}`)
-//   .then(val => { return val })
-
-// const util = require('util')
-
-// import('../controllers/' + controller)
-//   .catch(err => {
-//     throw err
-//   })
-//   .then(val => {
-//     todoController = val
-//   })
-
 /*
   GET
   List all the todos
 */
-router.get(BASEROUTE, todoController.getAllTodos)
+router.get(BASEROUTE, todoController.getTodo)
 
 /*
   POST
   Creating a todo
 */
-router.post(BASEROUTE, todoController.createTodo)
+router.post(BASEROUTE, todoController.postTodo)
 
 /*
   GET
@@ -76,12 +59,12 @@ router.delete(`${BASEROUTE}/:id`, todoController.deleteTodo)
   PUT
   Replaces a todo with a new one
 */
-router.put(`${BASEROUTE}/:id`, todoController.replaceTodo)
+router.put(`${BASEROUTE}/:id`, todoController.putTodo)
 
 /*
   PATCH
   Updates a todo with new information
 */
-router.patch(`${BASEROUTE}/:id`, todoController.updateTodo)
+router.patch(`${BASEROUTE}/:id`, todoController.patchTodo)
 
 export default router

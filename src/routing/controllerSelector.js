@@ -153,13 +153,13 @@ class ControllerSelector {
       .catch(err => { throw err })
       .then(val => { return val })
 
-    if (returnData.success) return new ReturnData(true, returnData.data)
+    if (returnData.success) return returnData
 
     returnData = await GetVersionFromCustomHeader(req)
       .catch(err => { throw err })
       .then(val => { return val })
 
-    if (returnData.success) return new ReturnData(true, returnData.data)
+    if (returnData.success) return returnData
 
     returnData = await GetVersionFromQueryString(req)
       .catch(err => { throw err })

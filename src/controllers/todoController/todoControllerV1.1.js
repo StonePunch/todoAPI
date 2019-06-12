@@ -3,41 +3,58 @@ import modelFactory from '../../models/modelFactory'
 import modelParser from '../../entities/modelParser'
 
 class TodosController {
-  async getAllTodos (_req, res) {
-    todoRepo.GetAll()
-      .then(val => {
-        if (val.success) {
-          return res.status(200).send({
-            success: true,
-            message: 'Todos were retrieved successfully',
-            data: val.data.map(todo => modelFactory.CreateTodoModel(todo))
-          })
-        }
-        return res.status(404).send({
-          success: false,
-          message: 'No Todos were found'
-        })
-      })
-  }
+  // async getAllTodos (_req, res) {
+  //   todoRepo.GetAll()
+  //     .then(val => {
+  //       if (val.success) {
+  //         return res.status(200).send({
+  //           success: true,
+  //           message: 'Todos were retrieved successfully',
+  //           data: val.data.map(todo => modelFactory.CreateTodoModel(todo))
+  //         })
+  //       }
+  //       return res.status(404).send({
+  //         success: false,
+  //         message: 'No Todos were found'
+  //       })
+  //     })
+  // }
 
   async getTodo (req, res) {
-    todoRepo.GetById(req.params.id)
-      .then(val => {
-        if (val.success) {
-          return res.status(200).send({
-            success: true,
-            message: 'Todo was retrieved successfully',
-            data: modelFactory.CreateTodoModel(val.data)
+    if (req.params.id) {
+      todoRepo.GetById(req.params.id)
+        .then(val => {
+          if (val.success) {
+            return res.status(200).send({
+              success: true,
+              message: 'Todo was retrieved successfully',
+              data: modelFactory.CreateTodoModel(val.data)
+            })
+          }
+          return res.status(404).send({
+            success: false,
+            message: 'Todo does not exist'
           })
-        }
-        return res.status(404).send({
-          success: false,
-          message: 'Todo does not exist'
         })
-      })
+    } else {
+      todoRepo.GetAll()
+        .then(val => {
+          if (val.success) {
+            return res.status(200).send({
+              success: true,
+              message: 'Todos were retrieved successfully',
+              data: val.data.map(todo => modelFactory.CreateTodoModel(todo))
+            })
+          }
+          return res.status(404).send({
+            success: false,
+            message: 'No Todos were found'
+          })
+        })
+    }
   }
 
-  async createTodo (req, res) {
+  async postTodo (req, res) {
     if (!req.body.title) {
       return res.status(400).send({
         success: false,
@@ -85,7 +102,7 @@ class TodosController {
       })
   }
 
-  async updateTodo (req, res) {
+  async patchTodo (req, res) {
     const returnData = await modelParser.ParseForUpdate(
       {
         id: req.params.id,
@@ -118,12 +135,12 @@ class TodosController {
       })
   }
 
-  async replaceTodo (req, res) {
+  async putTodo (req, res) {
     const returnData = await modelParser.ParseForReplace(
       {
-        'id': req.params.id,
-        'title': req.body.title,
-        'description': req.body.description
+        id: req.params.id,
+        title: req.body.title,
+        description: req.body.description
       })
       .then(val => {
         return val

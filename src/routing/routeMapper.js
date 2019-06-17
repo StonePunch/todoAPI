@@ -58,13 +58,21 @@ class RouteMapper {
     for (let i = 0; i < controllers.length; i++) {
       // Object with the methods found in the prototype of the controller, includes
       // both the constructor and the prototype methods
-      const controllerFunctions = Object.getPrototypeOf(controllers[i].controller)
+      let controllerFunctions
+      if (!controllers[i].controller.default) {
+        // When the class is exported using 'module.exports'
+        controllerFunctions = Object.getPrototypeOf(controllers[i].controller)
+      } else {
+        // When the class is exported using 'default export'
+        controllerFunctions = Object.getPrototypeOf(controllers[i].controller.default)
+      }
 
       // Names of all the methods in the passed controller, excluding the prototype
       const methodNames = Object.getOwnPropertyNames(controllerFunctions)
 
       // Iteration starts at 1 to avoid going over the constructor
       for (let i = 1; i < methodNames.length; i++) {
+        // Select which type of verb to use
         const methodName = methodNames[i]
         if (methodName.match(/get.+/)) {
           router.get(BASEROUTE, controllerFunctions[methodNames[i]])

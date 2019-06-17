@@ -1,40 +1,20 @@
 import express from 'express'
-import todoController from '../controllers/todoController/baseTodoController'
+import baseController from '../controllers/baseController'
 
 const router = express.Router()
 
 const BASEROUTE = '/api/todo'
 
-router.get(BASEROUTE, todoController.getTodo)
+router.get(BASEROUTE, baseController.get)
 
-/*
-  POST
-  Creating a todo
-*/
-router.post(BASEROUTE, todoController.postTodo)
+router.post(BASEROUTE, baseController.post)
 
-/*
-  GET
-  Get a single todo
-*/
-router.get(`${BASEROUTE}/:id`, todoController.getTodo)
+router.get(`${BASEROUTE}/:id`, baseController.get)
 
-/*
-  DELETE
-  Delete a todo
-*/
-router.delete(`${BASEROUTE}/:id`, todoController.deleteTodo)
+router.delete(`${BASEROUTE}/:id`, baseController.delete)
 
-/*
-  PUT
-  Replaces a todo with a new one
-*/
-router.put(`${BASEROUTE}/:id`, todoController.putTodo)
+router.put(`${BASEROUTE}/:id`, baseController.put)
 
-/*
-  PATCH
-  Updates a todo with new information
-*/
-router.patch(`${BASEROUTE}/:id`, todoController.patchTodo)
+router.patch(`${BASEROUTE}/:id`, baseController.patch)
 
 export default router

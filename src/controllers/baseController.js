@@ -2,13 +2,13 @@ import path from 'path'
 import logger from '../helper/logger'
 import controllerSelector from '../routing/controllerSelector'
 
-const basePath = path.join(
-  __dirname,
-  `/../controllers/`
-)
+const GetController = async req => {
+  const basePath = path.join(
+    __dirname,
+    `/../controllers/`
+  )
 
-const GetController = async (req) => {
-  const controller = await controllerSelector.GetSelectedController(req)
+  const controller = await controllerSelector.GetController(req)
     .catch(err => { throw err })
     .then(val => { return val.data })
 
@@ -19,7 +19,7 @@ const GetController = async (req) => {
 
     logger.consoleLog(`Selected ${controllerName}, version ${controllerVersion} to handle the request`)
 
-    return require(path.join(basePath, controller))
+    return GetConsistantController(require(path.join(basePath, controller)))
   }
   return null
 }
@@ -27,22 +27,35 @@ const GetController = async (req) => {
 const GetConsistantController = controller => {
   if (controller) {
     if (!controller.default) {
-      return controller
+      return Object.getPrototypeOf(controller)
     }
-    return controller.default
+    return Object.getPrototypeOf(controller.default)
   } else {
     return null
   }
 }
 
+const GetMethod = (verb, controller) => {
+  const methodNames = Object.getOwnPropertyNames(controller)
+  const regex = new RegExp(`${verb}.+`)
+  const methodArr = methodNames.filter(m => m.match(regex))
+
+  if (methodArr.length === 1) {
+    return methodArr[0]
+  }
+  return null
+}
+
 class BaseController {
   async get (req, res) {
-    const controller = GetConsistantController(await GetController(req)
+    const controller = await GetController(req)
       .catch(err => { throw err })
-      .then(val => { return val }))
+      .then(val => { return val })
+
+    const method = GetMethod('get', controller)
 
     if (controller) {
-      controller.getTodo(req, res)
+      controller[method](req, res)
     } else {
       return res.status(404).send({
         success: false,
@@ -52,12 +65,14 @@ class BaseController {
   }
 
   async post (req, res) {
-    const controller = GetConsistantController(await GetController(req)
+    const controller = await GetController(req)
       .catch(err => { throw err })
-      .then(val => { return val }))
+      .then(val => { return val })
+
+    const method = GetMethod('post', controller)
 
     if (controller) {
-      controller.postTodo(req, res)
+      controller[method](req, res)
     } else {
       return res.status(404).send({
         success: false,
@@ -67,12 +82,14 @@ class BaseController {
   }
 
   async patch (req, res) {
-    const controller = GetConsistantController(await GetController(req)
+    const controller = await GetController(req)
       .catch(err => { throw err })
-      .then(val => { return val }))
+      .then(val => { return val })
+
+    const method = GetMethod('patch', controller)
 
     if (controller) {
-      controller.patchTodo(req, res)
+      controller[method](req, res)
     } else {
       return res.status(404).send({
         success: false,
@@ -82,12 +99,14 @@ class BaseController {
   }
 
   async put (req, res) {
-    const controller = GetConsistantController(await GetController(req)
+    const controller = await GetController(req)
       .catch(err => { throw err })
-      .then(val => { return val }))
+      .then(val => { return val })
+
+    const method = GetMethod('put', controller)
 
     if (controller) {
-      controller.putTodo(req, res)
+      controller[method](req, res)
     } else {
       return res.status(404).send({
         success: false,
@@ -97,12 +116,14 @@ class BaseController {
   }
 
   async delete (req, res) {
-    const controller = GetConsistantController(await GetController(req)
+    const controller = await GetController(req)
       .catch(err => { throw err })
-      .then(val => { return val }))
+      .then(val => { return val })
+
+    const method = GetMethod('delete', controller)
 
     if (controller) {
-      controller.deleteTodo(req, res)
+      controller[method](req, res)
     } else {
       return res.status(404).send({
         success: false,

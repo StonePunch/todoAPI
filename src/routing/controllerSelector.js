@@ -185,7 +185,7 @@ const GetMostRecentVersion = async req => {
 }
 
 class ControllerSelector {
-  async GetSelectedController (req, _res) {
+  async GetController (req, _res) {
     let returnData
 
     returnData = await GetVersionFromAcceptHeaderVersion(req)

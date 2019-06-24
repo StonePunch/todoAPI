@@ -4,6 +4,17 @@ import { promisify } from 'util'
 import logger from '../helper/logger'
 import ReturnData from '../dataTypes/returnData'
 
+// Helper Functions
+
+const GetWithPrecision = num => {
+  let value = Number(num)
+  const res = typeof (num) === 'string' ? num.split('.') : num.toString().split('.')
+  if (res.length === 1) {
+    value = value.toFixed(1)
+  }
+  return value
+}
+
 const GetControllerFromUrl = async url => {
   const controller = url.match(/\/api\/([a-zA-Z]+)/)
 
@@ -48,6 +59,8 @@ const IsVersionAvailable = async (model, version) => {
     return new ReturnData(false, null, err)
   }
 }
+
+// Versioning
 
 const GetVersionFromAcceptHeaderVersion = async req => {
   try {
@@ -172,7 +185,8 @@ const GetMostRecentVersion = async req => {
       versions.push(controllerVersion[1])
     }
 
-    const mostRecentVersion = Math.max(...versions.map(val => parseFloat(val)))
+    let mostRecentVersion = Math.max(...versions.map(val => parseFloat(val)))
+    mostRecentVersion = GetWithPrecision(mostRecentVersion)
     const controller = `${model}ControllerV${mostRecentVersion}`
     return new ReturnData(true, path.join(`${model}Controller`, controller))
   } catch (err) {

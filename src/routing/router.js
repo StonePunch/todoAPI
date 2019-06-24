@@ -3,18 +3,20 @@ import baseController from '../controllers/baseController'
 
 const router = express.Router()
 
-const BASEROUTE = '/api/todo'
+const BASEROUTE = '/api'
 
-router.get(BASEROUTE, baseController.get)
+router.get(`${BASEROUTE}/todo`, baseController.get)
 
-router.post(BASEROUTE, baseController.post)
+router.post(`${BASEROUTE}/todo`, baseController.post)
 
-router.get(`${BASEROUTE}/:id`, baseController.get)
+router.get(`${BASEROUTE}/todo/:id`, baseController.get)
 
-router.delete(`${BASEROUTE}/:id`, baseController.delete)
+router.delete(`${BASEROUTE}/todo/:id`, baseController.delete)
 
-router.put(`${BASEROUTE}/:id`, baseController.put)
+router.put(`${BASEROUTE}/todo/:id`, baseController.put)
 
-router.patch(`${BASEROUTE}/:id`, baseController.patch)
+router.patch(`${BASEROUTE}/todo/:id`, baseController.patch)
+
+router.get(`${BASEROUTE}/test`, baseController.get)
 
 export default router

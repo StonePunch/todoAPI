@@ -6,7 +6,7 @@ import ReturnData from '../dataTypes/returnData'
 
 // Helper Functions
 
-const GetWithPrecision = num => {
+const GetWithPrecision = async num => {
   let value = Number(num)
   const res = typeof (num) === 'string' ? num.split('.') : num.toString().split('.')
   if (res.length === 1) {
@@ -186,7 +186,10 @@ const GetMostRecentVersion = async req => {
     }
 
     let mostRecentVersion = Math.max(...versions.map(val => parseFloat(val)))
-    mostRecentVersion = GetWithPrecision(mostRecentVersion)
+    mostRecentVersion = await GetWithPrecision(mostRecentVersion)
+      .catch(err => { throw err })
+      .then(val => { return val })
+
     const controller = `${model}ControllerV${mostRecentVersion}`
     return new ReturnData(true, path.join(`${model}Controller`, controller))
   } catch (err) {
@@ -200,31 +203,39 @@ const GetMostRecentVersion = async req => {
 
 class ControllerSelector {
   async GetController (req, _res) {
-    let returnData
+    try {
+      let returnData
 
-    returnData = await GetVersionFromAcceptHeaderVersion(req)
-      .catch(err => { throw err })
-      .then(val => { return val })
+      returnData = await GetVersionFromAcceptHeaderVersion(req)
+        .catch(err => { throw err })
+        .then(val => { return val })
 
-    if (returnData.success) return returnData
+      if (returnData.success) return new ReturnData(true, returnData)
 
-    returnData = await GetVersionFromCustomHeader(req)
-      .catch(err => { throw err })
-      .then(val => { return val })
+      returnData = await GetVersionFromCustomHeader(req)
+        .catch(err => { throw err })
+        .then(val => { return val })
 
-    if (returnData.success) return returnData
+      if (returnData.success) return new ReturnData(true, returnData)
 
-    returnData = await GetVersionFromQueryString(req)
-      .catch(err => { throw err })
-      .then(val => { return val })
+      returnData = await GetVersionFromQueryString(req)
+        .catch(err => { throw err })
+        .then(val => { return val })
 
-    if (returnData.success) return returnData
+      if (returnData.success) return new ReturnData(true, returnData)
 
-    returnData = await GetMostRecentVersion(req)
-      .catch(err => { throw err })
-      .then(val => { return val })
+      returnData = await GetMostRecentVersion(req)
+        .catch(err => { throw err })
+        .then(val => { return val })
 
-    return returnData
+      return new ReturnData(true, returnData)
+    } catch (err) {
+      logger.consoleLog(
+        'Error occured while attempting to retrieve the appropriate controller from the request'
+        , err
+      )
+      return new ReturnData(false, null, err)
+    }
   }
 }
 

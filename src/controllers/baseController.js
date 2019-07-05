@@ -1,30 +1,49 @@
 import path from 'path'
 import logger from '../helper/logger'
 import controllerSelector from '../routing/controllerSelector'
+import ReturnData from '../dataTypes/returnData'
 
 const GetController = async req => {
-  const basePath = path.join(
-    __dirname,
-    `/../controllers/`
-  )
+  try {
+    const basePath = path.join(
+      __dirname,
+      `/../controllers/`
+    )
 
-  const controller = await controllerSelector.GetController(req)
-    .catch(err => { throw err })
-    .then(val => { return val.data })
+    const returnData = await controllerSelector.GetController(req)
+      .catch(err => { throw err })
+      .then(val => { return val.data })
 
-  if (controller) {
-    const controllerSegments = controller.split('\\')
-    const controllerName = controllerSegments[0]
-    const controllerVersion = controllerSegments[1].split('V')[1]
+    if (!returnData.success) {
+      throw returnData.err
+    }
 
-    logger.consoleLog(`Selected ${controllerName}, version ${controllerVersion} to handle the request`)
+    const controller = returnData.data
 
-    return GetConsistantController(require(path.join(basePath, controller)))
+    if (controller) {
+      const controllerSegments = controller.split('\\')
+      const controllerName = controllerSegments[0]
+      const controllerVersion = controllerSegments[1].split('V')[1]
+
+      logger.consoleLog(`Selected ${controllerName}, version ${controllerVersion} to handle the request`)
+
+      return GetConsistantController(require(path.join(basePath, controller)))
+    }
+    return null
+  } catch (err) {
+    logger.consoleLog(
+      'Error occured while attempting to retrieve the appropriate controller from the request'
+      , err
+    )
+    return new ReturnData(false, null, err)
   }
-  return null
 }
 
 const GetConsistantController = controller => {
+  /*
+  // Depending on the export method used for the controller class the property
+  // will be different, this method is to fix that discrepancy
+  */
   if (controller) {
     if (!controller.default) {
       return Object.getPrototypeOf(controller)

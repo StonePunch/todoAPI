@@ -17,6 +17,7 @@ router.put(`${BASEROUTE}/todo/:id`, baseController.put)
 
 router.patch(`${BASEROUTE}/todo/:id`, baseController.patch)
 
+// Test case
 router.get(`${BASEROUTE}/test`, baseController.get)
 
 export default router

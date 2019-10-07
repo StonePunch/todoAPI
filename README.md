@@ -6,7 +6,7 @@
 </p>
 <p>
   The tuturial also has a <a href="https://medium.com/@purposenigeria/using-postgresql-and-sequelize-to-persist-our-data-c86854a3c6ac">Part 3</a>,
-  but as the objective of the project was to use Node.js with MongoDB this part was ignored
+  but, as the objective of the project was to use Node.js with MongoDB this part was ignored
 </p>
 
 <h2>Running the App</h2>
